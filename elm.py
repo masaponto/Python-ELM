@@ -17,7 +17,7 @@ from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
-from numba import double
+from numba import double, float64
 from numba.decorators import jit
 
 
