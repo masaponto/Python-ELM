@@ -76,10 +76,9 @@ class ELM (BaseEstimator):
 
         return np.sign(np.dot(self.beta_v, [self.__G(a_v, x_v) for a_v in self.a_vs]))
 
-    def __get_hid_matrix(self, x_num, x_vs):
+    def __get_hid_matrix(self, x_vs):
         """ output matrix hidden layer
         Args:
-        x_num (int): dimention of input vector
         x_vs ([[float]]): input vector
 
         Returns:
@@ -87,7 +86,8 @@ class ELM (BaseEstimator):
 
         """
 
-        return np.array([[self.__G(self.a_vs[j], x_vs[i]) for j in range(self.hid_num)] for i in range(x_num)])
+        return np.array([[self.__G(a_v, x_v) for a_v in self.a_vs] for x_v in x_vs])
+
 
     def fit(self, X, y):
         """ learning
@@ -100,14 +100,11 @@ class ELM (BaseEstimator):
 
         x_vs = np.array(list(map(self.__add_bias, X)))
 
-        # number input neurons
-        x_num = len(x_vs)
-
         # weight hid layer
         self.a_vs = np.random.uniform(-1.0, 1.0, (self.hid_num, len(x_vs[0])))
 
         # output matrix hidden nodes
-        h = self.__get_hid_matrix(x_num, x_vs)
+        h = self.__get_hid_matrix(x_vs)
 
         # pseudo-inverse matrix of H
         h_t = np.linalg.pinv(h)
