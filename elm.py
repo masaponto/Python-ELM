@@ -17,9 +17,7 @@ from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
-from numba import double, float64
-from numba.decorators import jit
-
+import gc; gc.collect()
 
 class ELM (BaseEstimator):
 
@@ -37,7 +35,7 @@ class ELM (BaseEstimator):
         self.hid_num = hid_num
         self.a = a  # sigmoid constant value
 
-    @jit
+
     def __sigmoid(self, x):
         """sigmoid function
         Args:
@@ -115,10 +113,19 @@ class ELM (BaseEstimator):
             t_vs = y
             # weight out layer
             self.beta_v = np.dot(h_t, t_vs)
+            del t_vs
+
         else:
             t_vs = np.array(list(map(self.__ltov(self.out_num), y)))
             # weight out layer
             self.beta_v = np.transpose(np.dot(h_t, t_vs))
+            del t_vs
+
+        del x_vs
+        del h
+        del h_t
+        gc.collect()
+
 
     def __add_bias(self, vec):
         """add bias to list
@@ -148,7 +155,7 @@ class ELM (BaseEstimator):
         X = np.array(list(map(self.__add_bias, X)))
         return np.array([self.__vtol(self.__f(xs)) for xs in X])
 
-    @jit
+
     def __vtol(self, vec):
         """tranceform vector (list) to label
 
