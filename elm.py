@@ -6,9 +6,6 @@
 This script is ELM for binary and multiclass classification.
 """
 
-__author__ = 'Masato'
-__version__ = 1.0
-
 import numpy as np
 
 from sklearn import preprocessing
@@ -17,7 +14,9 @@ from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
-import gc; gc.collect()
+import gc
+gc.collect()
+
 
 class ELM (BaseEstimator):
 
@@ -34,7 +33,6 @@ class ELM (BaseEstimator):
         """
         self.hid_num = hid_num
         self.a = a  # sigmoid constant value
-
 
     def __sigmoid(self, x):
         """sigmoid function
@@ -86,7 +84,6 @@ class ELM (BaseEstimator):
 
         return np.array([[self.__G(a_v, x_v) for a_v in self.a_vs] for x_v in x_vs])
 
-
     def fit(self, X, y):
         """ learning
 
@@ -126,7 +123,6 @@ class ELM (BaseEstimator):
         del h_t
         gc.collect()
 
-
     def __add_bias(self, vec):
         """add bias to list
 
@@ -155,7 +151,6 @@ class ELM (BaseEstimator):
         X = np.array(list(map(self.__add_bias, X)))
         return np.array([self.__vtol(self.__f(xs)) for xs in X])
 
-
     def __vtol(self, vec):
         """tranceform vector (list) to label
 
@@ -166,14 +161,15 @@ class ELM (BaseEstimator):
         int : label of classify result
 
         Exmples:
-        >>> e = MultiClassELM(10, 3, 1)
-        >>> e._MultiClassELM__vtol([1, -1, -1])
+        >>> e = ELM(10, 3)
+        >>> e.out_num = 3
+        >>> e._ELM__vtol([1, -1, -1])
         1
-        >>> e._MultiClassELM__vtol([-1, 1, -1])
+        >>> e._ELM__vtol([-1, 1, -1])
         2
-        >>> e._MultiClassELM__vtol([-1, -1, 1])
+        >>> e._ELM__vtol([-1, -1, 1])
         3
-        >>> e._MultiClassELM__vtol([-1, -1, -1])
+        >>> e._ELM__vtol([-1, -1, -1])
         0
 
         """
@@ -196,12 +192,12 @@ class ELM (BaseEstimator):
             label (int) : label
 
             Exmples:
-            >>> e = MultiClassELM(10, 3, 1)
-            >>> e._MultiClassELM__ltov(3)(1)
+            >>> e = ELM(10, 3)
+            >>> e._ELM__ltov(3)(1)
             [1, -1, -1]
-            >>> e._MultiClassELM__ltov(3)(2)
+            >>> e._ELM__ltov(3)(2)
             [-1, 1, -1]
-            >>> e._MultiClassELM__ltov(3)(3)
+            >>> e._ELM__ltov(3)(3)
             [-1, -1, 1]
 
             """
@@ -212,8 +208,8 @@ class ELM (BaseEstimator):
 
 def main():
 
-    db_names = ['colon-cancer']
-    hid_nums = [100 , 500, 1000]
+    db_names = ['australian']
+    hid_nums = [10, 20, 30]
 
     for db_name in db_names:
         print(db_name)
@@ -224,7 +220,7 @@ def main():
             data_set.data, data_set.target, test_size=0.4, random_state=0)
 
         for hid_num in hid_nums:
-            print(str(hid_num), end = ' ')
+            print(str(hid_num), end=' ')
             e = ELM(hid_num)
             ave = 0
             for i in range(10):
@@ -235,6 +231,7 @@ def main():
             print("Accuracy: %0.2f " % (ave))
 
 
-
 if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
     main()
