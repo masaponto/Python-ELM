@@ -27,7 +27,6 @@ class ELM (BaseEstimator):
         """
         Args:
         hid_num (int): number of hidden layer
-        out_num (int): number of out layer
         a (int) : const value of sigmoid funcion
 
         """
@@ -144,7 +143,7 @@ class ELM (BaseEstimator):
 
 
         Returns:
-        [int]: labels of classify result
+        [int]: labels of classification result
 
         """
 
