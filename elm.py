@@ -95,6 +95,7 @@ class ELM (BaseEstimator):
         x_vs = np.array(list(map(self.__add_bias, X)))
 
         # weight hid layer
+        np.random.seed()
         self.a_vs = np.random.uniform(-1.0, 1.0, (self.hid_num, len(x_vs[0])))
 
         # output matrix hidden nodes
