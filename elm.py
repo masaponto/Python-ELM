@@ -14,8 +14,8 @@ from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
-import gc
-gc.collect()
+#import gc
+#gc.collect()
 
 
 class ELM (BaseEstimator):
@@ -23,7 +23,7 @@ class ELM (BaseEstimator):
     """ ELM model Binary class classification
     """
 
-    def __init__(self, hid_num, a=1):
+    def __init__(self, hid_num, a=1, c = 2 ** 0):
         """
         Args:
         hid_num (int): number of hidden layer
@@ -32,6 +32,8 @@ class ELM (BaseEstimator):
         """
         self.hid_num = hid_num
         self.a = a  # sigmoid constant value
+        self.c = c
+
 
     def __sigmoid(self, x):
         """sigmoid function
@@ -69,6 +71,8 @@ class ELM (BaseEstimator):
 
         """
 
+        #print(np.sign(np.dot(self.beta_v, [self.__G(a_v, x_v) for a_v in self.a_vs])))
+
         return np.sign(np.dot(self.beta_v, [self.__G(a_v, x_v) for a_v in self.a_vs]))
 
     def __get_hid_matrix(self, x_vs):
@@ -101,27 +105,43 @@ class ELM (BaseEstimator):
         # output matrix hidden nodes
         h = self.__get_hid_matrix(x_vs)
 
-        # pseudo-inverse matrix of H
-        h_t = np.linalg.pinv(h)
+        I = np.matrix(np.identity(len(h)))
+
+        h_t = np.array(np.dot( h.T, np.linalg.inv((I / self.c) + np.dot(h, h.T) ) ))
+        #h_t = np.linalg.pinv(h)
+
+        #print(h_t)
+        print(h_t.shape)
+        #print(h_t)
+
+        #print(h_t_.shape)
+        #print(h_t_)
+
+
 
         self.out_num = max(y)  # number of class, number of output neuron
 
         if (self.out_num == 1):
             t_vs = y
-            # weight out layer
+
             self.beta_v = np.dot(h_t, t_vs)
-            del t_vs
+            print(np.dot(h_t, t_vs))
+            #print(np.dot(h_t_, t_vs))
+
+
+            #print('a')
+            # weight out layer
+            #self.beta_v = np.dot(h_t, t_vs)
+            #del t_vs
+
+
 
         else:
             t_vs = np.array(list(map(self.__ltov(self.out_num), y)))
             # weight out layer
             self.beta_v = np.transpose(np.dot(h_t, t_vs))
-            del t_vs
+            print(self.beta_v)
 
-        del x_vs
-        del h
-        del h_t
-        gc.collect()
 
     def __add_bias(self, vec):
         """add bias to list
@@ -175,6 +195,7 @@ class ELM (BaseEstimator):
         """
 
         if self.out_num == 1:
+            #print(vec)
             return round(vec, 0)
         else:
             v = list(vec)
@@ -208,30 +229,43 @@ class ELM (BaseEstimator):
 
 def main():
 
-    db_names = ['australian']
-    hid_nums = [10, 20, 30]
+    #db_names = ['australian']
+    #hid_nums = [10]
 
-    for db_name in db_names:
-        print(db_name)
-        # load iris data set
-        data_set = fetch_mldata(db_name)
-        data_set.data = preprocessing.scale(data_set.data)
-        X_train, X_test, y_train, y_test = cross_validation.train_test_split(
-            data_set.data, data_set.target, test_size=0.4, random_state=0)
+    db_name = 'australian'
+    #db_name = 'iris'
 
-        for hid_num in hid_nums:
-            print(str(hid_num), end=' ')
-            e = ELM(hid_num)
-            ave = 0
-            for i in range(10):
-                scores = cross_validation.cross_val_score(
-                    e, data_set.data, data_set.target, cv=5, scoring='accuracy')
-                ave += scores.mean()
-            ave /= 10
-            print("Accuracy: %0.2f " % (ave))
+
+    #for db_name in db_names:
+    #    print(db_name)
+    # load iris data set
+    data_set = fetch_mldata(db_name)
+    data_set.data = preprocessing.scale(data_set.data)
+    X_train, X_test, y_train, y_test = cross_validation.train_test_split(
+        data_set.data, data_set.target, test_size=0.4, random_state=0)
+
+    e = ELM(10)
+    e.fit(X_train, y_train)
+
+    #print(e.predict(X_test))
+
+    #print( e.predict(X_test) == y_test )
+    print( sum(e.predict(X_test) == y_test) / len(y_test))
+
+
+        #for hid_num in hid_nums:
+        #    print(str(hid_num), end=' ')
+        #    e = ELM(hid_num)
+        #    ave = 0
+        #    for i in range(10):
+        #        scores = cross_validation.cross_val_score(
+        #            e, data_set.data, data_set.target, cv=5, scoring='accuracy')
+        #        ave += scores.mean()
+        #    ave /= 10
+        #    print("Accuracy: %0.2f " % (ave))
 
 
 if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
+    #import doctest
+    #doctest.testmod()
     main()
