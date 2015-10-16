@@ -198,7 +198,7 @@ class ELM (BaseEstimator):
 
 class COBELM(ELM):
 
-    def __init__(self, hid_num, a=1, c=2 ** 0):
+    def __init__(self, hid_num, a = 1, c = 2 ** 0):
         super(COBELM, self).__init__(hid_num, a)
         self.c = c
 
@@ -235,16 +235,14 @@ class COBELM(ELM):
 
 def main():
 
-    db_names = ['iris']
-    hid_nums = [10, 20, 30]
+    db_names = ['wine']
+    hid_nums = [10, 20, 30, 1000]
 
     for db_name in db_names:
         print(db_name)
         # load iris data set
         data_set = fetch_mldata(db_name)
         data_set.data = preprocessing.scale(data_set.data)
-        # X_train, X_test, y_train, y_test = cross_validation.train_test_split(
-        #    data_set.data, data_set.target, test_size=0.4, random_state=0)
 
         print('ELM')
         for hid_num in hid_nums:
