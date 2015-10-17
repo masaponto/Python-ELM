@@ -210,7 +210,6 @@ class COBELM(ELM):
         Args:
         X [[float]]: feature vectors of learnig data
         y [float] : labels of leanig data
-n
         """
         self.out_num = max(y)  # number of class, number of output neuron
         x_vs = np.array(list(map(self._add_bias, X)))
