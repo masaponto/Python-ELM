@@ -17,7 +17,7 @@ from sklearn.datasets import load_svmlight_file
 
 class ELM (BaseEstimator):
 
-    """ ELM model Binary class classification
+    """ 3 step model ELM
     """
 
     def __init__(self, hid_num, a=1):
@@ -197,8 +197,10 @@ class ELM (BaseEstimator):
 
 
 class COBELM(ELM):
+    """Equality Constrained-Optimization-Based ELM
+    """
 
-    def __init__(self, hid_num, a = 1, c = 2 ** 0):
+    def __init__(self, hid_num, a=1, c=2 ** 0):
         super(COBELM, self).__init__(hid_num, a)
         self.c = c
 
@@ -208,7 +210,7 @@ class COBELM(ELM):
         Args:
         X [[float]]: feature vectors of learnig data
         y [float] : labels of leanig data
-
+n
         """
         self.out_num = max(y)  # number of class, number of output neuron
         x_vs = np.array(list(map(self._add_bias, X)))
@@ -219,6 +221,7 @@ class COBELM(ELM):
 
         # output matrix hidden nodes
         h = self._get_hid_matrix(x_vs)
+
         I = np.matrix(np.identity(len(h)))
         h_t = np.array(np.dot(h.T, np.linalg.inv(
             (I / self.c) + np.dot(h, h.T))))
