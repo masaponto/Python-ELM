@@ -30,7 +30,7 @@ class ELM (BaseEstimator):
         self.hid_num = hid_num
         self.a = a  # sigmoid constant value
 
-    def __sigmoid(self, x):
+    def _sigmoid(self, x):
         """sigmoid function
         Args:
         x (float): input
@@ -42,44 +42,6 @@ class ELM (BaseEstimator):
 
         return 1 / (1 + np.exp(- self.a * x))
 
-    def __G(self, a_v, x_v):
-        """output hidden nodes
-
-        Args:
-        a_v ([float]): weight vector of hidden layer
-        x_v ([float]): input vector
-
-        Returns:
-        float: output hidden nodes
-
-        """
-
-        return self.__sigmoid(np.dot(a_v, x_v))
-
-    def __f(self, x_v):
-        """output of NN
-        Args:
-        x_v ([float]): input vector
-
-        Returns:
-        int: labels
-
-        """
-
-        return np.sign(np.dot(self.beta_v, [self.__G(a_v, x_v) for a_v in self.a_vs]))
-
-    def _get_hid_matrix(self, x_vs):
-        """ output matrix hidden layer
-        Args:
-        x_vs ([[float]]): input vector
-
-        Returns:
-        [[float]]: output matrix of hidden layer
-
-        """
-
-        return np.array([[self.__G(a_v, x_v) for a_v in self.a_vs] for x_v in x_vs])
-
     def fit(self, X, y):
         """ learning
 
@@ -88,43 +50,35 @@ class ELM (BaseEstimator):
         y [float] : labels of leanig data
 
         """
+        self.out_num = max(y)  # number of class, number of output neuron
 
-        x_vs = np.array(list(map(self._add_bias, X)))
+        x_vs = self._add_bias(X)
 
         # weight hid layer
         np.random.seed()
-        self.a_vs = np.random.uniform(-1.0, 1.0, (self.hid_num, len(x_vs[0])))
+        self.a_vs = np.random.uniform(-1.0, 1.0, (len(x_vs[0]), self.hid_num))
 
-        # output matrix hidden nodes
-        h = self._get_hid_matrix(x_vs)
-
-        # pseudo-inverse matrix of H
-        h_t = np.linalg.pinv(h)
-
-        self.out_num = max(y)  # number of class, number of output neuron
+        h_t = np.linalg.pinv(self._sigmoid(np.dot(x_vs, self.a_vs)))
 
         if (self.out_num == 1):
-            t_vs = y
-            # weight out layer
-            self.beta_v = np.dot(h_t, t_vs)
+            self.beta_v = np.dot(h_t, y)
 
         else:
             t_vs = np.array(list(map(self._ltov(self.out_num), y)))
-            # weight out layer
-            self.beta_v = np.transpose(np.dot(h_t, t_vs))
+            self.beta_v = np.dot(h_t, t_vs)
 
-    def _add_bias(self, vec):
+    def _add_bias(self, x_vs):
         """add bias to list
 
         Args:
-        vec [float]: vec to add bias
+        vec Array: vec to add bias
 
         Returns:
         [float]: added vec
 
         """
 
-        return np.append(vec, 1)
+        return np.c_[x_vs, np.ones(len(x_vs))]
 
     def predict(self, X):
         """return classify result
@@ -138,8 +92,7 @@ class ELM (BaseEstimator):
 
         """
 
-        X = np.array(list(map(self._add_bias, X)))
-        return np.array([self.__vtol(self.__f(xs)) for xs in X])
+        return np.array(list(map(self.__vtol, np.sign(np.dot(self._sigmoid(np.dot(self._add_bias(X), self.a_vs)), self.beta_v)))))
 
     def __vtol(self, vec):
         """tranceform vector (list) to label
@@ -196,49 +149,12 @@ class ELM (BaseEstimator):
         return inltov
 
 
-class COBELM(ELM):
-    """Equality Constrained-Optimization-Based ELM
-    """
-
-    def __init__(self, hid_num, a=1, c=2 ** 0):
-        super(COBELM, self).__init__(hid_num, a)
-        self.c = c
-
-    def fit(self, X, y):
-        """ learning
-
-        Args:
-        X [[float]]: feature vectors of learnig data
-        y [float] : labels of leanig data
-        """
-        self.out_num = max(y)  # number of class, number of output neuron
-        x_vs = np.array(list(map(self._add_bias, X)))
-
-        # weight hid layer
-        np.random.seed()
-        self.a_vs = np.random.uniform(-1.0, 1.0, (self.hid_num, len(x_vs[0])))
-
-        # output matrix hidden nodes
-        h = self._get_hid_matrix(x_vs)
-
-        I = np.matrix(np.identity(len(h)))
-        h_t = np.array(np.dot(h.T, np.linalg.inv(
-            (I / self.c) + np.dot(h, h.T))))
-
-        if (self.out_num == 1):
-            t_vs = y
-            self.beta_v = np.dot(h_t, t_vs)
-
-        else:
-            t_vs = np.array(list(map(self._ltov(self.out_num), y)))
-            # weight out layer
-            self.beta_v = np.transpose(np.dot(h_t, t_vs))
-
-
 def main():
 
-    db_names = ['wine']
-    hid_nums = [10, 20, 30, 1000]
+    db_names = ['australian']
+    #db_names = ['iris']
+
+    hid_nums = [10, 20, 30]
 
     for db_name in db_names:
         print(db_name)
@@ -246,23 +162,21 @@ def main():
         data_set = fetch_mldata(db_name)
         data_set.data = preprocessing.scale(data_set.data)
 
+        # X_train, X_test, y_train, y_test = cross_validation.train_test_split(
+        #    data_set.data, data_set.target, test_size=0.4, random_state=0)
+
+        #e = ELM(10)
+        #e.fit(X_train, y_train)
+
+        # print(e.predict(X_test))
+        #print(sum(y_test == e.predict(X_test)) / len(y_test))
+
         print('ELM')
         for hid_num in hid_nums:
             print(str(hid_num), end=' ')
             e = ELM(hid_num)
             ave = 0
-            for i in range(10):
-                scores = cross_validation.cross_val_score(
-                    e, data_set.data, data_set.target, cv=5, scoring='accuracy')
-                ave += scores.mean()
-            ave /= 10
-            print("Accuracy: %0.2f " % (ave))
 
-        print('COBELM')
-        for hid_num in hid_nums:
-            print(str(hid_num), end=' ')
-            e = COBELM(hid_num)
-            ave = 0
             for i in range(10):
                 scores = cross_validation.cross_val_score(
                     e, data_set.data, data_set.target, cv=5, scoring='accuracy')
