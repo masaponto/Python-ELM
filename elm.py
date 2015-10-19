@@ -33,7 +33,7 @@ class ELM (BaseEstimator):
     def _sigmoid(self, x):
         """sigmoid function
         Args:
-        x (float): input
+        x ([[float]]) array : input
 
         Returns:
         float: output of sigmoid
@@ -46,8 +46,8 @@ class ELM (BaseEstimator):
         """ learning
 
         Args:
-        X [[float]]: feature vectors of learnig data
-        y [float] : labels of leanig data
+        X [[float]] array : feature vectors of learnig data
+        y [[float]] array : labels of leanig data
 
         """
         self.out_num = max(y)  # number of class, number of output neuron
@@ -71,7 +71,7 @@ class ELM (BaseEstimator):
         """add bias to list
 
         Args:
-        vec Array: vec to add bias
+        x_vs [[float]] Array: vec to add bias
 
         Returns:
         [float]: added vec
@@ -84,7 +84,7 @@ class ELM (BaseEstimator):
         """return classify result
 
         Args:
-        X [[float]]: feature vectors of learnig data
+        X [[float]] array: feature vectors of learnig data
 
 
         Returns:
@@ -161,15 +161,6 @@ def main():
         # load iris data set
         data_set = fetch_mldata(db_name)
         data_set.data = preprocessing.scale(data_set.data)
-
-        # X_train, X_test, y_train, y_test = cross_validation.train_test_split(
-        #    data_set.data, data_set.target, test_size=0.4, random_state=0)
-
-        #e = ELM(10)
-        #e.fit(X_train, y_train)
-
-        # print(e.predict(X_test))
-        #print(sum(y_test == e.predict(X_test)) / len(y_test))
 
         print('ELM')
         for hid_num in hid_nums:
