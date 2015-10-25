@@ -15,6 +15,13 @@ class COBELM(ELM):
     """
 
     def __init__(self, hid_num, a=1, c=2 ** 0):
+        """
+        Args:
+        hid_num (int): number of hidden layer
+        a (int) : const value of sigmoid funcion
+
+        """
+
         super(COBELM, self).__init__(hid_num, a)
         self.c = c
 
@@ -22,8 +29,8 @@ class COBELM(ELM):
         """ learning
 
         Args:
-        X [[float]]: feature vectors of learnig data
-        y [float] : labels of leanig data
+        X [[float]] Array: feature vectors of learnig data
+        y [float] Array: labels of leanig data
         """
         self.out_num = max(y)  # number of class, number of output neuron
         x_vs = self._add_bias(X)
@@ -33,7 +40,6 @@ class COBELM(ELM):
         self.a_vs = np.random.uniform(-1.0, 1.0, (len(x_vs[0]), self.hid_num))
 
         # output matrix hidden nodes
-        #h = self._get_hid_matrix(x_vs)
         h = self._sigmoid(np.dot(x_vs, self.a_vs))
 
         I = np.matrix(np.identity(len(h)))
@@ -45,7 +51,6 @@ class COBELM(ELM):
 
         else:
             t_vs = np.array(list(map(self._ltov(self.out_num), y)))
-            # weight out layer
             self.beta_v = np.transpose(np.dot(h_t, t_vs))
 
 
