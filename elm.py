@@ -76,6 +76,11 @@ class ELM (BaseEstimator):
         Returns:
         [float]: added vec
 
+        Examples:
+        >>> e = ELM(10, 3)
+        >>> e._add_bias(np.array([[1,2,3], [1,2,3]]))
+        array([[ 1.,  2.,  3.,  1.],
+               [ 1.,  2.,  3.,  1.]])
         """
 
         return np.c_[x_vs, np.ones(len(x_vs))]
