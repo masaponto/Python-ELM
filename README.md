@@ -1,5 +1,6 @@
 # Python-ELM
 Extreme Learning Machine written in Python3.4.3
+used anaconda3-2.3.0
 
 ## How to use
 see  
