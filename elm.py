@@ -117,8 +117,6 @@ class ELM (BaseEstimator):
         2
         >>> e._ELM__vtol([-1, -1, 1])
         3
-        >>> e._ELM__vtol([-1, -1, -1])
-        0
 
         """
 
@@ -128,9 +126,11 @@ class ELM (BaseEstimator):
             v = list(vec)
             if len(v) == 1:
                 return vec[0]
-            elif (max(v) == -1):
-                return 0
-            return int(v.index(1)) + 1
+            else:
+                return int(v.index(max(v))) + 1
+            #elif (max(v) == -1):
+            #    return 0
+            #return int(v.index(1)) + 1
 
     def _ltov(self, n):
         """trasform label scalar to vector
