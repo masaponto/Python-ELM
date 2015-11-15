@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" ELM
-
+"""
+Extreme Learning Machine
 This script is ELM for binary and multiclass classification.
 """
 
@@ -116,7 +116,6 @@ class ELM (BaseEstimator):
         Args:
         X [[float]] array : feature vectors of learnig data
         y [[float]] array : labels of leanig data
-
         """
         # number of class, number of output neuron
         self.out_num = max(y)
@@ -145,7 +144,6 @@ class ELM (BaseEstimator):
 
         Args:
         X [[float]] array: feature vectors of learnig data
-
 
         Returns:
         [int]: labels of classification result
