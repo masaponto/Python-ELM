@@ -21,7 +21,7 @@ class COBELM(ELM):
         hid_num (int): number of hidden layer
         a (int) : const value of sigmoid funcion
         """
-        super(COBELM, self).__init__(hid_num, a)
+        super().__init__(hid_num, a)
         self.c = c
 
     def fit(self, X, y):
@@ -54,7 +54,6 @@ class COBELM(ELM):
         else:
             t_vs = np.array(list(map(self._ltov(self.out_num), y)))
             self.beta_v = np.dot(h_t, t_vs)
-
 
 
 def main():
