@@ -48,9 +48,8 @@ class COBELM(ELM):
         h_t = np.array(np.dot(h.T, np.linalg.inv(
             (I / self.c) + np.dot(h, h.T))))
 
-        if (self.out_num == 1):
+        if self.out_num == 1:
             self.beta_v = np.dot(h_t, y)
-
         else:
             t_vs = np.array(list(map(self._ltov(self.out_num), y)))
             self.beta_v = np.dot(h_t, t_vs)
