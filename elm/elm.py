@@ -89,7 +89,7 @@ class ELM (BaseEstimator):
             v = list(vec)
             return int(v.index(max(v))) + 1
 
-    def _ltov(self, n):
+    def _ltov(self, n, label):
         """
         trasform label scalar to vector
         Args:
@@ -98,16 +98,14 @@ class ELM (BaseEstimator):
 
         Exmples:
         >>> e = ELM(10, 3)
-        >>> e._ltov(3)(1)
+        >>> e._ltov(3, 1)
         [1, -1, -1]
-        >>> e._ltov(3)(2)
+        >>> e._ltov(3, 2)
         [-1, 1, -1]
-        >>> e._ltov(3)(3)
+        >>> e._ltov(3, 3)
         [-1, -1, 1]
         """
-        def in_ltov(label):
-            return [-1 if i != label else 1 for i in range(1, n + 1)]
-        return in_ltov
+        return [-1 if i != label else 1 for i in range(1, n + 1)]
 
     def fit(self, X, y):
         """
@@ -135,7 +133,7 @@ class ELM (BaseEstimator):
         if self.out_num == 1:
             self.beta_v = np.dot(h_t, y)
         else:
-            t_vs = np.array([self._ltov(self.out_num)(_y) for _y in y])
+            t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
 
     def predict(self, X):

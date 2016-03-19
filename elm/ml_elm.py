@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator
 from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
-from elm.elm import ELM
+from elm import ELM
 
 class MLELM(ELM):
     """
@@ -58,13 +58,14 @@ class MLELM(ELM):
         if self.out_num == 1:
             self.beta_v = np.dot(h_t, y)
         else:
-            t_vs = np.array(list(map(self._ltov(self.out_num), y)))
+            t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
 
     def predict(self, X):
         x_v = self.fix(self._add_bias(X))
         g = self._sigmoid(np.dot(x_v, self.a_vs))
-        return np.array(list(map(self._vtol, np.sign(np.dot(g, self.beta_v)))))
+        y = np.sign(np.dot(g, self.beta_v))
+        return np.array([self._vtol(_y) for _y in y])
 
 
 def main():

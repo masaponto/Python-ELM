@@ -8,7 +8,8 @@ from sklearn.base import BaseEstimator
 from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
-from elm.elm import ELM
+
+from elm import ELM
 
 
 class COBELM(ELM):
@@ -52,7 +53,7 @@ class COBELM(ELM):
         if self.out_num == 1:
             self.beta_v = np.dot(h_t, y)
         else:
-            t_vs = np.array(list(map(self._ltov(self.out_num), y)))
+            t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
 
 
