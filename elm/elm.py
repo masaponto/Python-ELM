@@ -135,7 +135,7 @@ class ELM (BaseEstimator):
         if self.out_num == 1:
             self.beta_v = np.dot(h_t, y)
         else:
-            t_vs = np.array(list(map(self._ltov(self.out_num), y)))
+            t_vs = np.array([self._ltov(self.out_num)(_y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
 
     def predict(self, X):
@@ -148,8 +148,10 @@ class ELM (BaseEstimator):
         Returns:
         [int]: labels of classification result
         """
-        g = self._sigmoid(np.dot(self._add_bias(X), self.a_vs))
-        return np.array(list(map(self._vtol, np.sign(np.dot(g, self.beta_v)))))
+        _g = self._sigmoid(np.dot(self._add_bias(X), self.a_vs))
+        y = np.sign(np.dot(_g, self.beta_v))
+        return np.array([self._vtol(_y) for _y in y])
+
 
 
 def main():
