@@ -151,7 +151,6 @@ class ELM (BaseEstimator):
         return np.array([self._vtol(_y) for _y in y])
 
 
-
 def main():
 
     db_names = ['australian', 'iris']
