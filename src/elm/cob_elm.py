@@ -9,7 +9,7 @@ from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
-from elm.elm import ELM
+from elm import ELM
 
 
 class COBELM(ELM):
@@ -76,7 +76,6 @@ def main():
             ave += scores.mean()
         ave /= 10
         print("Accuracy: %0.2f " % (ave))
-
 
     print('ELM')
     for hid_num in hid_nums:

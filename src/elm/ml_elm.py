@@ -8,7 +8,9 @@ from sklearn.base import BaseEstimator
 from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
-from elm.elm import ELM
+
+from elm import ELM
+
 
 class MLELM(ELM):
     """
