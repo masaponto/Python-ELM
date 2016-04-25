@@ -53,7 +53,7 @@ class ELM (BaseEstimator):
         Returns:
         float: output of sigmoid
         """
-        return 1 / (1 + np.exp(np.where(self.a * x < -5e2, 5e2, -self.a * x)))
+        return 1 / (1 + np.exp(np.where(np.abs(self.a * x) > 709, np.sign(x) * 709, self.a * x)))
 
     def _add_bias(self, x_vs):
         """add bias to list
