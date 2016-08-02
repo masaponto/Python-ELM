@@ -146,7 +146,7 @@ class ELM (BaseEstimator):
         [int]: labels of classification result
         """
         _g = self._sigmoid(np.dot(self._add_bias(X), self.a_vs))
-        y = np.sign(np.dot(_g, self.beta_v))
+        y = np.dot(_g, self.beta_v)
         return np.array([self._vtol(_y) for _y in y])
 
 
