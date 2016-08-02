@@ -83,7 +83,7 @@ class ELM (BaseEstimator):
         """
 
         if self.out_num == 1:
-            return round(vec, 0)
+            return np.sign(vec)
         else:
             v = list(vec)
             return int(v.index(max(v))) + 1
