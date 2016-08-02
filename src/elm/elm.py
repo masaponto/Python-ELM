@@ -32,18 +32,6 @@ class ELM (BaseEstimator):
         self.hid_num = hid_num
         self.a = a  # sigmoid constant value
 
-   # def _sigmoid(self, x):
-   #     """
-   #     sigmoid function
-   #     Args:
-   #     x ([[float]]) array : input
-   #
-   #     Returns:
-   #     float: output of sigmoid
-   #     """
-   #
-   #     return 1 / (1 + np.exp(- self.a * x))
-
     def _sigmoid(self, x):
         """
         sigmoid function
@@ -53,7 +41,7 @@ class ELM (BaseEstimator):
         Returns:
         float: output of sigmoid
         """
-        return 1 / (1 + np.exp(np.where(np.abs(self.a * x) > 709, np.sign(x) * 709, self.a * x)))
+        return 1 / (1 + np.exp(-self.a * x))
 
     def _add_bias(self, x_vs):
         """add bias to list
