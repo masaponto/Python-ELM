@@ -9,13 +9,13 @@ This script is ELM for binary and multiclass classification.
 import numpy as np
 
 from sklearn import preprocessing
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
 
 
-class ELM (BaseEstimator):
+class ELM (BaseEstimator, ClassifierMixin):
 
     """
     3 step model ELM
@@ -134,6 +134,8 @@ class ELM (BaseEstimator):
         else:
             t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
+
+        return self
 
     def predict(self, X):
         """

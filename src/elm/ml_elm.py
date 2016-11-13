@@ -4,7 +4,7 @@
 import numpy as np
 
 from sklearn import preprocessing
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.datasets import fetch_mldata
 from sklearn import cross_validation
 from sklearn.datasets import load_svmlight_file
@@ -12,7 +12,7 @@ from sklearn.datasets import load_svmlight_file
 from elm import ELM
 
 
-class MLELM(ELM):
+class MLELM(ELM, ClassifierMixin):
     """
     Multi Layer Extreme Learning Machine
 
@@ -62,6 +62,8 @@ class MLELM(ELM):
         else:
             t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
             self.beta_v = np.dot(h_t, t_vs)
+
+        return self
 
     def predict(self, X):
         x_v = self.fix(self._add_bias(X))
