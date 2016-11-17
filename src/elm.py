@@ -32,7 +32,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         self.hid_num = hid_num
         self.a = a
 
-    def _sigmoid(self, x):
+    def __sigmoid(self, x):
         """
         sigmoid function
         Args:
@@ -43,7 +43,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         """
         return 1 / (1 + np.exp(-self.a * x))
 
-    def _add_bias(self, x_vs):
+    def __add_bias(self, X):
         """add bias to list
 
         Args:
@@ -54,40 +54,14 @@ class ELM (BaseEstimator, ClassifierMixin):
 
         Examples:
         >>> e = ELM(10, 3)
-        >>> e._add_bias(np.array([[1,2,3], [1,2,3]]))
+        >>> e._ELM__add_bias(np.array([[1,2,3], [1,2,3]]))
         array([[ 1.,  2.,  3.,  1.],
                [ 1.,  2.,  3.,  1.]])
         """
 
-        return np.c_[x_vs, np.ones(len(x_vs))]
+        return np.c_[X, np.ones(X.shape[0])]
 
-    def _vtol(self, vec):
-        """
-        tranceform vector (list) to label
-
-        Args:
-        v: int list, list to transform
-
-        Returns:
-        int : label of classify result
-
-        Exmples:
-        >>> e = ELM(10, 3)
-        >>> e.out_num = 3
-        >>> e._vtol([1, -1, -1])
-        1
-        >>> e._vtol([-1, 1, -1])
-        2
-        >>> e._vtol([-1, -1, 1])
-        3
-        """
-
-        if self.out_num == 1:
-            return np.sign(vec)
-        else:
-            return np.argmax(vec) + 1
-
-    def _ltov(self, n, label):
+    def __ltov(self, n, label):
         """
         trasform label scalar to vector
         Args:
@@ -96,11 +70,11 @@ class ELM (BaseEstimator, ClassifierMixin):
 
         Exmples:
         >>> e = ELM(10, 3)
-        >>> e._ltov(3, 1)
+        >>> e._ELM__ltov(3, 1)
         [1, -1, -1]
-        >>> e._ltov(3, 2)
+        >>> e._ELM__ltov(3, 2)
         [-1, 1, -1]
-        >>> e._ltov(3, 3)
+        >>> e._ELM__ltov(3, 3)
         [-1, -1, 1]
         """
         return [-1 if i != label else 1 for i in range(1, n + 1)]
@@ -116,23 +90,21 @@ class ELM (BaseEstimator, ClassifierMixin):
         # number of class, number of output neuron
         self.out_num = max(y)
 
+        if self.out_num != 1:
+            y = np.array([self.__ltov(self.out_num, _y) for _y in y])
+
         # add bias to feature vectors
-        x_vs = self._add_bias(X)
+        X = self.__add_bias(X)
 
         # generate weights between input layer and hidden layer
         np.random.seed()
-        self.a_vs = np.random.uniform(-1., 1.,
-                                      (len(x_vs[0]), self.hid_num))
+        self.W = np.random.uniform(-1., 1.,
+                                   (self.hid_num, X.shape[1]))
 
         # find inverse weight matrix
-        h_t = np.linalg.pinv(self._sigmoid(np.dot(x_vs, self.a_vs)))
+        _H = np.linalg.pinv(self.__sigmoid(np.dot(self.W, X.T)))
 
-        # find weights between output layer
-        if self.out_num == 1:
-            self.beta_v = np.dot(h_t, y)
-        else:
-            t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
-            self.beta_v = np.dot(h_t, t_vs)
+        self.beta = np.dot(_H.T, y)
 
         return self
 
@@ -146,9 +118,14 @@ class ELM (BaseEstimator, ClassifierMixin):
         Returns:
         [int]: labels of classification result
         """
-        _g = self._sigmoid(np.dot(self._add_bias(X), self.a_vs))
-        y = np.dot(_g, self.beta_v)
-        return np.array([self._vtol(_y) for _y in y])
+
+        _H = self.__sigmoid(np.dot(self.W, self.__add_bias(X).T))
+        y = np.dot(_H.T, self.beta)
+
+        if self.out_num == 1:
+            return np.sign(y)
+        else:
+            return np.argmax(y, 1) + np.ones(y.shape[0])
 
 
 def main():
