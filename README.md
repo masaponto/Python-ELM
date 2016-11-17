@@ -1,19 +1,25 @@
 # Python-ELM
-Extreme Learning Machine implemented in Python3 using anaconda3-4.0.0
+Extreme Learning Machine implemented in Python3 with scikit-learn
 
-- elm.py is general ELM
-- cob_elm.py is equality constrained optimization based ELM
+This module has 3-type ELM
+- elm.py is general 3-step model ELM   
+- cob_elm.py is equality constrained optimization based ELM  
   - http://www.ntu.edu.sg/home/egbhuang/pdf/ELM-Unified-Learning.pdf
-- ml_elm is multi layer ELM
+- ml_elm is multi layer ELM  
   - http://www.ntu.edu.sg/home/egbhuang/pdf/ieee-is-elm.pdf
 
-## How to install 
-I recommend you to install this to anaconda3-4.0.0  
+## Require
+- scikit-learn: 0.18.1  
+- numpy: 1.10.4 and up  
 
+## How to install 
 ```
 pip install git+https://github.com/masaponto/python-elm
 ```
 
-## Require
-- scikit-learn: 0.17.1
-- numpy: 1.10.4
+## Usage
+
+```python
+
+
+```

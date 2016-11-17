@@ -30,7 +30,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         a (int) : const value of sigmoid funcion
         """
         self.hid_num = hid_num
-        self.a = a  # sigmoid constant value
+        self.a = a
 
     def _sigmoid(self, x):
         """
@@ -85,8 +85,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         if self.out_num == 1:
             return np.sign(vec)
         else:
-            v = list(vec)
-            return int(v.index(max(v))) + 1
+            return np.argmax(vec) + 1
 
     def _ltov(self, n, label):
         """
