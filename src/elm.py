@@ -8,11 +8,7 @@ This script is ELM for binary and multiclass classification.
 
 import numpy as np
 
-from sklearn import preprocessing
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.datasets import fetch_mldata
-from sklearn import cross_validation
-from sklearn.datasets import load_svmlight_file
 
 
 class ELM (BaseEstimator, ClassifierMixin):
@@ -129,9 +125,11 @@ class ELM (BaseEstimator, ClassifierMixin):
 
 
 def main():
+    from sklearn import preprocessing
+    from sklearn.datasets import fetch_mldata
+    from sklearn.model_selection import ShuffleSplit, KFold, cross_val_score
 
     db_names = ['australian', 'iris']
-
     hid_nums = [10, 20, 30]
 
     for db_name in db_names:
@@ -142,12 +140,16 @@ def main():
         for hid_num in hid_nums:
             print(hid_num, end=' ')
             e = ELM(hid_num)
+
             ave = 0
             for i in range(10):
-                scores = cross_validation.cross_val_score(
-                    e, data_set.data, data_set.target, cv=5, scoring='accuracy')
+                cv = KFold(n_splits=5, shuffle=True)
+                scores = cross_val_score(
+                    e, data_set.data, data_set.target, cv=cv, scoring='accuracy', n_jobs=-1)
                 ave += scores.mean()
+
             ave /= 10
+
             print("Accuracy: %0.3f " % (ave))
 
 
