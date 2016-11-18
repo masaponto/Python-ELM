@@ -23,14 +23,14 @@ pip install git+https://github.com/masaponto/python-elm
 
 ```python
 from elm import ELM
-from sklearn import preprocessing
+from sklearn.preprocessing import normalize
 from sklearn.datasets import fetch_mldata
 from sklearn.model_selection import train_test_split
 
 db_name = 'australian'
 
 data_set = fetch_mldata(db_name)
-data_set.data = preprocessing.normalize(data_set.data)
+data_set.data = normalize(data_set.data)
 
 X_train, X_test, y_train, y_test = train_test_split(
     data_set.data, data_set.target, test_size=0.4)
@@ -44,9 +44,9 @@ print("ELM Accuracy %0.3f " % elm.score(X_test, y_test))
 
 ```python
 from elm import ELM
-from sklearn import preprocessing
+from sklearn.preprocessing import normalize
 from sklearn.datasets import fetch_mldata
-from sklearn.model_selection import ShuffleSplit, KFold, cross_val_score
+from sklearn.model_selection import KFold, cross_val_score
 
 db_names = ['australian', 'iris']
 hid_nums = [10, 20, 30]
@@ -54,7 +54,7 @@ hid_nums = [10, 20, 30]
 for db_name in db_names:
     print(db_name)
     data_set = fetch_mldata(db_name)
-    data_set.data = preprocessing.normalize(data_set.data)
+    data_set.data = normalize(data_set.data)
 
     for hid_num in hid_nums:
         print(hid_num, end=' ')
