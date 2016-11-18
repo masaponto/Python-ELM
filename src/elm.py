@@ -28,7 +28,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         self.hid_num = hid_num
         self.a = a
 
-    def __sigmoid(self, x):
+    def _sigmoid(self, x):
         """
         sigmoid function
         Args:
@@ -39,7 +39,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         """
         return 1 / (1 + np.exp(-self.a * x))
 
-    def __add_bias(self, X):
+    def _add_bias(self, X):
         """add bias to list
 
         Args:
@@ -50,14 +50,14 @@ class ELM (BaseEstimator, ClassifierMixin):
 
         Examples:
         >>> e = ELM(10, 3)
-        >>> e._ELM__add_bias(np.array([[1,2,3], [1,2,3]]))
+        >>> e._add_bias(np.array([[1,2,3], [1,2,3]]))
         array([[ 1.,  2.,  3.,  1.],
                [ 1.,  2.,  3.,  1.]])
         """
 
         return np.c_[X, np.ones(X.shape[0])]
 
-    def __ltov(self, n, label):
+    def _ltov(self, n, label):
         """
         trasform label scalar to vector
         Args:
@@ -66,11 +66,11 @@ class ELM (BaseEstimator, ClassifierMixin):
 
         Exmples:
         >>> e = ELM(10, 3)
-        >>> e._ELM__ltov(3, 1)
+        >>> e._ltov(3, 1)
         [1, -1, -1]
-        >>> e._ELM__ltov(3, 2)
+        >>> e._ltov(3, 2)
         [-1, 1, -1]
-        >>> e._ELM__ltov(3, 3)
+        >>> e._ltov(3, 3)
         [-1, -1, 1]
         """
         return [-1 if i != label else 1 for i in range(1, n + 1)]
@@ -87,10 +87,10 @@ class ELM (BaseEstimator, ClassifierMixin):
         self.out_num = max(y)
 
         if self.out_num != 1:
-            y = np.array([self.__ltov(self.out_num, _y) for _y in y])
+            y = np.array([self._ltov(self.out_num, _y) for _y in y])
 
         # add bias to feature vectors
-        X = self.__add_bias(X)
+        X = self._add_bias(X)
 
         # generate weights between input layer and hidden layer
         np.random.seed()
@@ -98,7 +98,7 @@ class ELM (BaseEstimator, ClassifierMixin):
                                    (self.hid_num, X.shape[1]))
 
         # find inverse weight matrix
-        _H = np.linalg.pinv(self.__sigmoid(np.dot(self.W, X.T)))
+        _H = np.linalg.pinv(self._sigmoid(np.dot(self.W, X.T)))
 
         self.beta = np.dot(_H.T, y)
 
@@ -115,7 +115,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         [int]: labels of classification result
         """
 
-        _H = self.__sigmoid(np.dot(self.W, self.__add_bias(X).T))
+        _H = self._sigmoid(np.dot(self.W, self._add_bias(X).T))
         y = np.dot(_H.T, self.beta)
 
         if self.out_num == 1:
@@ -135,7 +135,7 @@ def main():
     for db_name in db_names:
         print(db_name)
         data_set = fetch_mldata(db_name)
-        data_set.data = preprocessing.scale(data_set.data)
+        data_set.data = preprocessing.normalize(data_set.data)
 
         for hid_num in hid_nums:
             print(hid_num, end=' ')

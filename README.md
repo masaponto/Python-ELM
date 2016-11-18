@@ -30,7 +30,7 @@ from sklearn.model_selection import train_test_split
 db_name = 'australian'
 
 data_set = fetch_mldata(db_name)
-data_set.data = preprocessing.scale(data_set.data)
+data_set.data = preprocessing.normalize(data_set.data)
 
 X_train, X_test, y_train, y_test = train_test_split(
     data_set.data, data_set.target, test_size=0.4)

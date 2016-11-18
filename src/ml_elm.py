@@ -2,119 +2,72 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
-from sklearn import preprocessing
 from sklearn.base import BaseEstimator, ClassifierMixin
-from sklearn.datasets import fetch_mldata
-from sklearn import cross_validation
-from sklearn.datasets import load_svmlight_file
-
 from elm import ELM
 
 
-class MLELM(ELM, ClassifierMixin):
+class MLELM(ELM):
     """
     Multi Layer Extreme Learning Machine
 
     """
 
-    def __init__(self,
-                 hidden_units=[10, 20, 30]):
+    def __init__(self, hidden_units, a=1):
         self.hidden_units = hidden_units
         self.betas = []
-        self.a = 1
+        self.a = a
 
-    def fix(self, x_vs):
+    def __calc_hidden_layer(self, X):
         """
         Args:
-        x_vs np.array input feature vector
+        X np.array input feature vector
         """
         for beta in self.betas:
-            x_vs = self._add_bias(np.dot(x_vs, beta.T))
-        return x_vs
+            X = np.dot(beta, X.T).T
+        return X
 
     def fit(self, X, y):
-
-        X = self._add_bias(X)
         self.out_num = max(y)
+        X = self._add_bias(X)
 
-        for hid_num in self.hidden_units[:len(self.hidden_units) - 1]:
-            x_vs = self.fix(X)
+        for hid_num in self.hidden_units[:-1]:
+            _X = self.__calc_hidden_layer(X)
             np.random.seed()
-            a_vs = np.random.uniform(-1., 1.,
-                                     (len(x_vs[0]), hid_num))
-            h_t = np.linalg.pinv(self._sigmoid(np.dot(x_vs, a_vs)))
-            beta = np.dot(h_t, x_vs)
-
+            W = np.random.uniform(-1., 1.,
+                                  (hid_num, _X.shape[1]))
+            _H = np.linalg.pinv(self._sigmoid(np.dot(W, _X.T)))
+            beta = np.dot(_H.T, _X)
             self.betas.append(beta)
 
-        hid_num = self.hidden_units[-1]
-        x_vs = self.fix(X)
-        np.random.seed()
-        self.a_vs = np.random.uniform(-1., 1.,
-                                      (len(x_vs[0]), hid_num))
+        _X = self.__calc_hidden_layer(X)
 
-        h_t = np.linalg.pinv(self._sigmoid(np.dot(x_vs, self.a_vs)))
-
-        # find weights between output layer
-        if self.out_num == 1:
-            self.beta_v = np.dot(h_t, y)
-        else:
-            t_vs = np.array([self._ltov(self.out_num, _y) for _y in y])
-            self.beta_v = np.dot(h_t, t_vs)
+        self.elm = ELM(hid_num=self.hidden_units[-1])
+        self.elm.fit(_X, y)
 
         return self
 
     def predict(self, X):
-        x_v = self.fix(self._add_bias(X))
-        g = self._sigmoid(np.dot(x_v, self.a_vs))
-        y = np.sign(np.dot(g, self.beta_v))
-        return np.array([self._vtol(_y) for _y in y])
+        X = self.__calc_hidden_layer(self._add_bias(X))
+        return self.elm.predict(X)
 
 
 def main():
-    from elm import ELM
-    #import ELM
+    from sklearn import preprocessing
+    from sklearn.datasets import fetch_mldata
+    from sklearn.model_selection import train_test_split
+
     db_name = 'diabetes'
-    #db_name = 'australian'
     data_set = fetch_mldata(db_name)
-    data_set.data = preprocessing.scale(data_set.data)
+    data_set.data = preprocessing.normalize(data_set.data)
 
-    #data_set.data = data_set.data.astype(np.float32)
-    #data_set.target = data_set.target.astype(np.int32)
-    #data_set.data /= 255
+    X_train, X_test, y_train, y_test = train_test_split(
+        data_set.data, data_set.target, test_size=0.4)
 
-    print(data_set.data.shape)
+    mlelm = MLELM(hidden_units=(10, 30, 200)).fit(X_train, y_train)
+    elm = ELM(200).fit(X_train, y_train)
 
-    #e = ELM(50)
-    #e.fit(data_set.data, data_set.target)
-    #re = e.predict(data_set.data)
-    # print(sum([r == y for r, y in zip(re, data_set.target)]) /
-    #      len(data_set.target))
-
-    e = ELM(200)
-    ave = 0
-    for i in range(10):
-        scores = cross_validation.cross_val_score(
-            e, data_set.data, data_set.target, cv=5, scoring='accuracy')
-        ave += scores.mean()
-    ave /= 10
-    print("ELM Accuracy: %0.3f " % (ave))
-
-    #e = MLELM(hidden_units=(10, 10, 50))
-    #e.fit(data_set.data, data_set.target)
-    #re = e.predict(data_set.data)
-    # print(sum([r == y for r, y in zip(re, data_set.target)]) /
-    #      len(data_set.target))
-
-    e = MLELM(hidden_units=(10, 10, 200))
-    ave = 0
-    for i in range(10):
-        scores = cross_validation.cross_val_score(
-            e, data_set.data, data_set.target, cv=5, scoring='accuracy')
-        ave += scores.mean()
-    ave /= 10
-    print("ML ELM Accuracy: %0.3f " % (ave))
+    print("MLELM Accuracy %0.3f " % mlelm.score(X_test, y_test))
+    print("ELM Accuracy %0.3f " % elm.score(X_test, y_test))
 
 
 if __name__ == "__main__":
