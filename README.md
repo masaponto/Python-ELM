@@ -1,9 +1,9 @@
 # Python-ELM
-Extreme Learning Machine implemented in Python3 with scikit-learn
+Extreme Learning Machine implemented in Python3 with scikit-learn  
 
-This module has 3-type ELM
+This module has 3-type ELM  
 - elm.py is general 3-step model ELM   
-- cob_elm.py is equality constrained optimization based ELM  
+- ecob_elm.py is equality constrained optimization based ELM  
   - http://www.ntu.edu.sg/home/egbhuang/pdf/ELM-Unified-Learning.pdf
 - ml_elm is multi layer ELM  
   - http://www.ntu.edu.sg/home/egbhuang/pdf/ieee-is-elm.pdf
@@ -54,7 +54,7 @@ hid_nums = [10, 20, 30]
 for db_name in db_names:
     print(db_name)
     data_set = fetch_mldata(db_name)
-    data_set.data = preprocessing.scale(data_set.data)
+    data_set.data = preprocessing.normalize(data_set.data)
 
     for hid_num in hid_nums:
         print(hid_num, end=' ')

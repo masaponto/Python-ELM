@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='elm',
-    version='0.3',
+    version='0.4',
     description='Extreme Learning Machine',
     author='masaponto',
     author_email='masaponto@gmail.com',
