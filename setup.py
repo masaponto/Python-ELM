@@ -7,7 +7,7 @@ setup(
     author='masaponto',
     author_email='masaponto@gmail.com',
     url='masaponto.github.io',
-    install_requires=['scikit-learn', 'numpy'],
+    install_requires=['scikit-learn>=0.18.1', 'numpy'],
     py_modules=['elm', 'ecob_elm', 'ml_elm'],
     package_dir={'': 'src'}
 )
