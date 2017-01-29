@@ -71,3 +71,6 @@ for db_name in db_names:
 
         print("Accuracy: %0.3f " % (ave))
 ```
+
+## License
+MIT
