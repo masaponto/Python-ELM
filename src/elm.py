@@ -32,7 +32,7 @@ class ELM (BaseEstimator, ClassifierMixin):
         """
         sigmoid function
         Args:
-        x ([[float]]) array : input
+        x (float): input
 
         Returns:
         float: output of sigmoid
@@ -114,7 +114,6 @@ class ELM (BaseEstimator, ClassifierMixin):
         Returns:
         [int]: labels of classification result
         """
-
         _H = self._sigmoid(np.dot(self.W, self._add_bias(X).T))
         y = np.dot(_H.T, self.beta)
 
