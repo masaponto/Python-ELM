@@ -37,6 +37,8 @@ class ELM (BaseEstimator, ClassifierMixin):
         Returns:
         float: output of sigmoid
         """
+        sigmoid_range = 34.538776394910684
+        x = np.clip(x, -sigmoid_range, sigmoid_range)
         return 1 / (1 + np.exp(-self.a * x))
 
     def _add_bias(self, X):
