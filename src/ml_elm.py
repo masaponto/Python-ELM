@@ -53,13 +53,17 @@ class MLELM(ELM):
 
 def main():
     from sklearn import preprocessing
-    from sklearn.datasets import fetch_mldata
+    from sklearn.datasets import fetch_openml as fetch_mldata
     from sklearn.model_selection import train_test_split
 
     db_name = 'diabetes'
     data_set = fetch_mldata(db_name)
     data_set.data = preprocessing.normalize(data_set.data)
-
+    
+    tmp = data_set.target
+    tmpL = [ 1 if i == "tested_positive" else 0 for i in tmp]
+    data_set.target = tmpL
+    
     X_train, X_test, y_train, y_test = train_test_split(
         data_set.data, data_set.target, test_size=0.4)
 
