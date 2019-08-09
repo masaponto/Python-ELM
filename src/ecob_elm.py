@@ -56,13 +56,14 @@ class ECOBELM(ELM, ClassifierMixin):
 
 def main():
     from sklearn import preprocessing
-    from sklearn.datasets import fetch_mldata
+    from sklearn.datasets import fetch_openml as fetch_mldata
     from sklearn.model_selection import cross_val_score
 
     db_name = 'iris'
     hid_num = 1000
-    data_set = fetch_mldata(db_name)
+    data_set = fetch_mldata(db_name, version=1)
     data_set.data = preprocessing.scale(data_set.data)
+    data_set.target = preprocessing.LabelEncoder().fit_transform(data_set.target)
 
     print(db_name)
     print('ECOBELM', hid_num)

@@ -59,11 +59,11 @@ def main():
     db_name = 'diabetes'
     data_set = fetch_mldata(db_name)
     data_set.data = preprocessing.normalize(data_set.data)
-    
+
     tmp = data_set.target
-    tmpL = [ 1 if i == "tested_positive" else 0 for i in tmp]
+    tmpL = [ 1 if i == "tested_positive" else -1 for i in tmp]
     data_set.target = tmpL
-    
+
     X_train, X_test, y_train, y_test = train_test_split(
         data_set.data, data_set.target, test_size=0.4)
 

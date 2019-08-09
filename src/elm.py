@@ -53,8 +53,8 @@ class ELM (BaseEstimator, ClassifierMixin):
         Examples:
         >>> e = ELM(10, 3)
         >>> e._add_bias(np.array([[1,2,3], [1,2,3]]))
-        array([[ 1.,  2.,  3.,  1.],
-               [ 1.,  2.,  3.,  1.]])
+        array([[1., 2., 3., 1.],
+               [1., 2., 3., 1.]])
         """
 
         return np.c_[X, np.ones(X.shape[0])]
@@ -127,31 +127,32 @@ class ELM (BaseEstimator, ClassifierMixin):
 
 def main():
     from sklearn import preprocessing
-    from sklearn.datasets import fetch_mldata
+    from sklearn.datasets import fetch_openml as fetch_mldata
     from sklearn.model_selection import ShuffleSplit, KFold, cross_val_score
 
-    db_names = ['australian', 'iris']
-    hid_nums = [10, 20, 30]
+    db_name = 'australian'
+    hid_nums = [100, 200, 300]
 
-    for db_name in db_names:
-        print(db_name)
-        data_set = fetch_mldata(db_name)
-        data_set.data = preprocessing.normalize(data_set.data)
+    data_set = fetch_mldata(db_name)
+    data_set.data = preprocessing.normalize(data_set.data)
+    data_set.target = [1 if i == 1 else -1
+                       for i in  data_set.target.astype(int)]
 
-        for hid_num in hid_nums:
-            print(hid_num, end=' ')
-            e = ELM(hid_num)
+    for hid_num in hid_nums:
+        print(hid_num, end=' ')
+        e = ELM(hid_num)
 
-            ave = 0
-            for i in range(10):
-                cv = KFold(n_splits=5, shuffle=True)
-                scores = cross_val_score(
-                    e, data_set.data, data_set.target, cv=cv, scoring='accuracy', n_jobs=-1)
-                ave += scores.mean()
+        ave = 0
+        for i in range(10):
+            cv = KFold(n_splits=5, shuffle=True)
+            scores = cross_val_score(
+                e, data_set.data, data_set.target,
+                cv=cv, scoring='accuracy', n_jobs=-1)
+            ave += scores.mean()
 
-            ave /= 10
+        ave /= 10
 
-            print("Accuracy: %0.3f " % (ave))
+        print("Accuracy: %0.3f " % (ave))
 
 
 if __name__ == "__main__":
